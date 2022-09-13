@@ -122,7 +122,7 @@
 .end_macro 
 
 .macro SETUP_REGS()
-	li s1, 51500 # 51200 + 300
-
+	li s1, 20
+	li s2, 20
 	li s3, 0xFF000000
 .end_macro
