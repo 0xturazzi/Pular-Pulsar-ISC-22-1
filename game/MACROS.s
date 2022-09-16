@@ -3,6 +3,7 @@
 # # # # # # # # 
 .data
 newLine: .string "\n"
+
 # # # # # # # #  
 # CONSTANTES 
 # # # # # # # # 
@@ -11,11 +12,11 @@ newLine: .string "\n"
 
 
 # # # # # # # #  
-# MACROS
+# MACROS GERAIS
 # # # # # # # #
 .text
-.macro syscall(%op)
-	li a7, %op
+.macro syscall(%op)		# Multipos wrappers de syscall aceitando
+	li a7, %op 			# tanto instrucao e registrador ou valor
 	ecall
 .end_macro
 
@@ -31,30 +32,20 @@ newLine: .string "\n"
 	ecall
 .end_macro
 
-.macro exit()
+.macro exit()			# wrapper de exit
 	syscall(10)
 .end_macro
 
-.macro get_time(%reg)
-	syscall(30)
-	mv %reg, a0
-.end_macro
-
-.macro sleep(%reg)
-	mv a0, %reg
-	syscall(32)
-.end_macro
-
-.macro print_str(%reg)
+.macro print_str(%reg) 	# wrappers de print str
 	syscall(4, %reg)
 .end_macro
 
-.macro print_line()
+.macro print_line() 		# printa o char '\n'
 	la t0, newLine
 	print_str(t0)
 .end_macro
 
-.macro print_int(%int)
+.macro print_int(%int) 	# wrappers de print int
 	syscall(1, %int)
 .end_macro
 
@@ -63,31 +54,34 @@ newLine: .string "\n"
 	syscall(1)
 .end_macro
 
-.macro print_hex(%reg)
+.macro print_hex(%reg) 	# wrappers de print int as hex
 	syscall(34, %reg)
 .end_macro
 
-.macro print_char(%int)
+.macro print_char(%int) 	# wrappers de print char
 	syscall(11, %int)
 .end_macro
 
-.macro get_time (%reg)
-	li a7, 30
-	ecall
+# # # # # # # #  
+# MACROS TEMPO
+# # # # # # # #
+
+
+.macro get_time(%reg) 	# retorna o valor da syscall de tempo
+	syscall(30)
 	mv %reg, a0
 .end_macro
 
-.macro wait_time (%reg)
+.macro sleep(%reg) 		# dorme por X ms
 	mv a0, %reg
-	li a7, 32
-	ecall
+	syscall(32)
 .end_macro
 
-.macro wait_frame (%reg) 
-	# reg = old time
-	# 1 frame = 33ms
+.macro wait_frame (%reg) 		# Seria usado se precisase limitar
+	# reg = old time 				# a execucao da fisica por X fps
+	# 1 frame = 33ms 				# garatindo consistencia em varias maquinas
 	# return reg = new time
-	get_time(t0)
+	get_time(t0) 				# porem, ja ta pesado demais ashjdkjsahdk
 	sub t0, t0, %reg
 	li t1, 33
 	
@@ -97,11 +91,17 @@ newLine: .string "\n"
 	SKIP_WAIT: get_time(%reg)
 .end_macro
 
-.macro read_input(%reg)
-	lw %reg, MMIO_add
+# # # # # # # #  
+# MACROS DEBUG
+# # # # # # # #
+
+.macro print_frame()		# printa o frame atual na tela
+	li s0,0xFF200604	
+	lw t2,0(s0)	
+	print_int(t2)
 .end_macro
- 
-.macro drump_regs()
+
+.macro dump_regs() 		# Dump dos registrados reservados 
 	print_frame()
 	print_line()
 	print_hex(s1)
@@ -115,95 +115,109 @@ newLine: .string "\n"
 	print_line()
 .end_macro 
 
-.macro DEBUG_SCREEN_RED()   # FRAME 0
-	li s0,0xFF200604	# Escolhe o Frame 0 ou 1
-	li t2,0			# inicio Frame 0
-	sw t2,0(s0)		# seleciona a Frame t2
-	# Preenche a tela de vermelho
-	li t1,0xFF000000	# endereco inicial da Memoria VGA - Frame 0
-	li t2,0xFF012C00	# endereco final 
-	li t3,0x07070707	# cor vermelho|vermelho|vermelhor|vermelho
+			##### OBS NAO DEIXAR AS FUNCOES QUE PREENCHEM A TELA NO CODIGO
+			##### DEFINITIVO, VAI QUEBRAR O SISTEMA DE NEXT_FRAME
+			##### ELAS ALTERAM FRAMES MANUALMENTE
+
+.macro DEBUG_SCREEN_RED()   		# Preenche FRAME 0 de vermelho
+	li s0,0xFF200604				# Escolhe o Frame 
+	li t2,0	
+	sw t2,0(s0)	
+								# Preenche a tela de vermelho
+	li t1,0xFF000000				# endereco inicial da Memoria VGA - Frame 0
+	li t2,0xFF012C00				# endereco final 
+	li t3,0x07070707				# cor vermelho|vermelho|vermelhor|vermelho
 	LOOP: 	
-		beq t1,t2,OUT		# Se for o último endereço então sai do loop
-		sw t3,0(t1)		# escreve a word na memória VGA
-		addi t1,t1,4		# soma 4 ao endereço
-		j LOOP		# volta a verificar
+		beq t1,t2,OUT			# Se for o último endereço então sai do loop
+		sw t3,0(t1)				# escreve a word na memória VGA
+		addi t1,t1,4				# soma 4 ao endereço
+		j LOOP					# volta a verificar
 	OUT:
 .end_macro
 
-.macro DEBUG_SCREEN_GREEN() # FRAME 1
-	li s0,0xFF200604	# Escolhe o Frame 0 ou 1
-	li t2,1			# inicio Frame 1
-	sw t2,0(s0)		# seleciona a Frame t2
+.macro DEBUG_SCREEN_GREEN() 		# Analogamente Preenche FRAME 1 de verde
+	li s0,0xFF200604
+	li t2,1			
+	sw t2,0(s0)		
 
-	li t1,0xFF100000	# endereco inicial da Memoria VGA - Frame 1
-	li t2,0xFF112C00	# endereco final
-	li t3,0x70707070	# cor vermelho|vermelho|vermelhor|vermelho
+	li t1,0xFF100000
+	li t2,0xFF112C00
+	li t3,0x70707070
 	LOOP: 	
-		beq t1,t2,OUT		# Se for o último endereço então sai do loop
-		sw t3,0(t1)		# escreve a word na memória VGA
-		addi t1,t1,4		# soma 4 ao endereço
-		j LOOP			# volta a verificar
+		beq t1,t2,OUT		
+		sw t3,0(t1)		
+		addi t1,t1,4		
+		j LOOP			
 	OUT:
 .end_macro
 
-.macro SCREEN_PURPLE_0()
-	li s0,0xFF200604	# Escolhe o Frame 0 ou 1
-	li t2,0			# inicio Frame 0
-	sw t2,0(s0)		# seleciona a Frame t2
-	# Preenche a tela de vermelho
-	li t1,0xFF000000	# endereco inicial da Memoria VGA - Frame 0
-	li t2,0xFF012C00	# endereco final 
-	li t3,0x82828282	# cor vermelho|vermelho|vermelhor|vermelho
+.macro SCREEN_PURPLE_0() # Analogamente Preenche FRAME 0 de roxo
+	li s0,0xFF200604	
+	li t2,0			
+	sw t2,0(s0)		
+	
+	li t1,0xFF000000
+	li t2,0xFF012C00	
+	li t3,0x82828282	
 	LOOP: 	
-		beq t1,t2,OUT		# Se for o último endereço então sai do loop
-		sw t3,0(t1)		# escreve a word na memória VGA
-		addi t1,t1,4		# soma 4 ao endereço
-		j LOOP		# volta a verificar
+		beq t1,t2,OUT		
+		sw t3,0(t1)		
+		addi t1,t1,4		
+		j LOOP		
 	OUT:
 .end_macro
 
-.macro SCREEN_PURPLE_1()
-	li s0,0xFF200604	# Escolhe o Frame 0 ou 1
-	li t2,1			# inicio Frame 1
-	sw t2,0(s0)		# seleciona a Frame t2
+.macro SCREEN_PURPLE_1() # Analogamente Preenche FRAME 1 de roxo
+	li s0,0xFF200604
+	li t2,1			
+	sw t2,0(s0)		
 
-	li t1,0xFF100000	# endereco inicial da Memoria VGA - Frame 1
-	li t2,0xFF112C00	# endereco final
-	li t3,0x82828282	# cor vermelho|vermelho|vermelhor|vermelho
+	li t1,0xFF100000
+	li t2,0xFF112C00
+	li t3,0x82828282
 	LOOP: 	
-		beq t1,t2,OUT		# Se for o último endereço então sai do loop
-		sw t3,0(t1)		# escreve a word na memória VGA
-		addi t1,t1,4		# soma 4 ao endereço
-		j LOOP			# volta a verificar
+		beq t1,t2,OUT		
+		sw t3,0(t1)		
+		addi t1,t1,4		
+		j LOOP			
 	OUT:
 .end_macro
 
+			##### OBS NAO DEIXAR AS FUNCOES QUE PREENCHEM A TELA NO CODIGO
+			##### DEFINITIVO, VAI QUEBRAR O SISTEMA DE NEXT_FRAME
+			##### ELAS ALTERAM FRAMES MANUALMENTE
 
-.macro NEXT_FRAME() # Avancar frame
-	mv t1,s4
-	mv s4,s3
+# # # # # # # #  
+# MACROS SETUP
+# # # # # # # #
+
+.macro NEXT_FRAME() 		# Avancar frame
+	mv t1,s4				# troca s3 e s4 ----- BUFFER 0 e 1
+	mv s4,s3				# riscv nao tem instrucao pra fazer isso de uma vez :(
 	mv s3,t1
 
-#	mv s2,s1
+#	mv s2,s1 			# DEBUG
 
-	li s0,0xFF200604	
-	lw t2,0(s0)	
+	li s0,0xFF200604		# Le o frame atual e inverte
+	lw t2,0(s0)
 	xori t2,t2, 1
 	sw t2,0(s0)		
+	
+	
+			##### SOMENTE ESSA MACRO PODE ALTERAR O FRAME DURANTE O RUNTIME
+			##### ASSIM SEMPRE GARANTIMOS QUE NO FRAME 0 ESCREVEMOS NO BUFFER 1
+			##### E VICE VERSA... NAO ALTERAR !!!!
 .end_macro 
 
-.macro print_frame()
-	li s0,0xFF200604	
-	lw t2,0(s0)	
-	print_int(t2)
-.end_macro
-
-
-
 .macro SETUP_REGS()
-	li s1, 51480 # 51200 + 300 - 20
-	li s2, 51480 # 51200 + 300 - 20
-	li s3, 0xFF000000
-	li s4, 0xFF100000
+	li s1, 51480 			# 51200 + 300 - 20
+	li s2, 51480 			# 51200 + 300 - 20
+	li s3, 0xFF000000		# Buffer 0
+	li s4, 0xFF100000 		# Buffer
+			#### RESERVADOS
+			# s1 posicao 
+			# s2 posicao passada
+			# s3 next write
+			# s4 last write
 .end_macro
+ 
