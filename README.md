@@ -5,7 +5,7 @@ Feito com riscV assembly 32 bits
 
 
 # Recursos Uteis
-https://github.com/davipatury/tutorial-riscv-dynamic-print
-https://www.youtube.com/watch?v=tx9t2hGWWko&list=PLL0Kob75DU32afhLBN5nY2KzOJ5k6lw-Q&index=3
-https://www.piskelapp.com
-https://github.com/gss214/Gerenciador-de-Conversao
+- [Exemplo monitor](https://github.com/davipatury/tutorial-riscv-dynamic-print)
+- [Tutoriais monitores](https://www.youtube.com/watch?v=tx9t2hGWWko&list=PLL0Kob75DU32afhLBN5nY2KzOJ5k6lw-Q&index=3)
+- [piskel](https://www.piskelapp.com)
+- [Converter BMP .data](https://github.com/gss214/Gerenciador-de-Conversao)
