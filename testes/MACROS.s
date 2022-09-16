@@ -113,8 +113,44 @@
 	OUT:
 .end_macro
 
+.macro SCREEN_PURPLE_0()
+	li s0,0xFF200604	# Escolhe o Frame 0 ou 1
+	li t2,0			# inicio Frame 0
+	sw t2,0(s0)		# seleciona a Frame t2
+	# Preenche a tela de vermelho
+	li t1,0xFF000000	# endereco inicial da Memoria VGA - Frame 0
+	li t2,0xFF012C00	# endereco final 
+	li t3,0x82828282	# cor vermelho|vermelho|vermelhor|vermelho
+	LOOP: 	
+		beq t1,t2,OUT		# Se for o último endereço então sai do loop
+		sw t3,0(t1)		# escreve a word na memória VGA
+		addi t1,t1,4		# soma 4 ao endereço
+		j LOOP		# volta a verificar
+	OUT:
+.end_macro
+
+.macro SCREEN_PURPLE_1()
+	li s0,0xFF200604	# Escolhe o Frame 0 ou 1
+	li t2,1			# inicio Frame 1
+	sw t2,0(s0)		# seleciona a Frame t2
+
+	li t1,0xFF100000	# endereco inicial da Memoria VGA - Frame 1
+	li t2,0xFF112C00	# endereco final
+	li t3,0x82828282	# cor vermelho|vermelho|vermelhor|vermelho
+	LOOP: 	
+		beq t1,t2,OUT		# Se for o último endereço então sai do loop
+		sw t3,0(t1)		# escreve a word na memória VGA
+		addi t1,t1,4		# soma 4 ao endereço
+		j LOOP			# volta a verificar
+	OUT:
+.end_macro
+
 
 .macro NEXT_FRAME() # Avancar frame
+	mv t1,s1
+	mv s1,s2
+	mv s2,t1
+
 	li s0,0xFF200604	
 	lw t2,0(s0)	
 	xori t2,t2, 1
@@ -122,7 +158,8 @@
 .end_macro 
 
 .macro SETUP_REGS()
-	li s1, 51500 # 51200 + 300
-
-	li s3, 0xFF000000
+	li s1, 51480 # 51200 + 300 - 20
+	li s2, 51480 # 51200 + 300 - 20
+	li s3, 0xFF100000
+	li s4, 0xFF000000
 .end_macro
