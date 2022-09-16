@@ -1,10 +1,7 @@
-.macro print_player(%reg1, %reg2, %int)
+.macro print_player(%reg1, %int) 	# Printa um quadrado verde que eu to fingindo ser o player  
 	mv t0, %reg1
-
-	
 	li t3, %int
-	
-	add t0, %reg2, t0
+	add t0, s3, t0 	
 	li t4, 11
 	VERT_DRAW:
 		sw t3, 0(t0)
@@ -17,37 +14,41 @@
 
 .end_macro
 
-.macro move_player()
+.macro move_player() 	# Movimenta o player com base no input 
 
-	li t2, 119
+	# OBS SO TO CHECANDO COM CHAR MINUSCULO
+
+	# para todos os movimentos salva s1 em s2 (old position)
+
+	li t2, 119 			# w
 	beq t2, a0, UP
-	li t2, 115
+	li t2, 115 			# s
 	beq t2, a0, DOWN
-	li t2, 97
+	li t2, 97			# a
 	beq t2, a0, LEFT
-	li t2, 100
+	li t2, 100			# d
 	beq t2, a0, RIGHT
 	j END
 UP:
 	mv s2,s1
-	li t0, 7680 #320 x 24
+	li t0, 7680 			# colisao com teto 320 x 24
 	ble s1, t0, END
-	addi s1,s1,-1280
+	addi s1,s1,-1280 	# "diminui" a posicao vertical em 320*4
 	j END
 	
 DOWN:
 	mv s2,s1
-	li t0, 57600 # 320 x 180
+	li t0, 57600 		# colisao com chao 320 x 180
 	bge s1, t0, END
-	addi s1,s1,1280
+	addi s1,s1,1280 		# "aumenta" a posicao vertical em 320*4
 	j END
 	
 LEFT:
 	mv s2,s1
 	li t0, 20
 	li t3, 320
-	rem t1, s1, t3
-	ble t1, t0, END
+	rem t1, s1, t3    	# extrai a posicao horizontal da posicao total
+	ble t1, t0, END		# colisao com a parede da esquerda 20
 	addi s1,s1,-4
 	j END
 	
@@ -55,8 +56,8 @@ RIGHT:
 	mv s2,s1
 	li t0, 288
 	li t3, 320
-	rem t1, s1, t3
-	bge t1, t0, END
+	rem t1, s1, t3 		# extrai a posicao horizontal da posicao total
+	bge t1, t0, END		# colisao com a parede da direita 288
 	addi s1,s1,4
 	j END
 	
