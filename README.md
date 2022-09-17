@@ -1,9 +1,9 @@
 # Pular-Pulsar-ISC-22-1
 UnB ISC turma 22.1 grupo 33
-Clone do jogo de arcade Pulsar
-Feito com riscV assembly 32 bits
 
-![](https://github.com/0xturazzi/Pular-Pulsar-ISC-22-1/blob/main/art/png/menu.png)
+Clone do jogo de arcade Pulsar. Feito com riscV assembly 32 bits
+
+![Menu do jogo](https://github.com/0xturazzi/Pular-Pulsar-ISC-22-1/blob/main/art/png/menu.png)
 
 # Recursos Uteis
 - [Exemplo monitor](https://github.com/davipatury/tutorial-riscv-dynamic-print)
