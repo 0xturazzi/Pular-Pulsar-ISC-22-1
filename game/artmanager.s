@@ -1,6 +1,6 @@
 .data
 .include "../game/data/background.data"
-
+.include "../game/data/sapo_spritesheet.data"
 
 .text
 .macro print_bg()
@@ -25,3 +25,29 @@
 .end_macro
 
 	
+.macro print_sapo() 	# Printa um quadrado verde que eu to fingindo ser o player  
+	mv t0, s1
+	
+	add t0, s3, t0 	
+	la t1, sapo_spritesheet
+	addi t1, t1, 8
+	li t2, 12
+	lb t3, look
+	mul t2, t2, t3
+	add t1,t1,t2
+	
+	li t4, 11
+	VERT_DRAW:
+		lw t3, 0(t1)
+		sw t3, 0(t0)
+		lw t3, 4(t1)
+		sw t3, 4(t0)
+		lw t3, 8(t1)
+		sw t3, 8(t0)
+		
+		addi t1, t1, 144
+		addi t0, t0,320
+		addi t4,t4,-1
+		bgez t4, VERT_DRAW
+
+.end_macro

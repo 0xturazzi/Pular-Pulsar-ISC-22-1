@@ -209,6 +209,11 @@ newLine: .string "\n"
 			##### E VICE VERSA... NAO ALTERAR !!!!
 .end_macro 
 
+.macro get_frame(%reg) 	# salva o frame atual em um registrador
+	li s0,0xFF200604	
+	lw %reg,0(s0)	 
+.end_macro
+
 .macro SETUP_REGS()
 	li s1, 51480 			# 51200 + 300 - 20
 	li s2, 51480 			# 51200 + 300 - 20

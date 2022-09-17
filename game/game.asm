@@ -17,10 +17,12 @@ MAIN:
 	print_bg() 						# Printa o Background 
 	#SCREEN_PURPLE_0() 				# Ignorar: DEBUG
 	#SCREEN_PURPLE_1() 				# Ignorar: DEBUG
-	print_player(s1, 0x71717171)
+	###print_player(s1, 0x71717171)
+	print_sapo()
 	NEXT_FRAME()
 	print_bg()
-	print_player(s1, 0x71717171)
+	###print_player(s1, 0x71717171)
+	print_sapo()
 	li s0,0xFF200604					# Garantir que sempre comeca na frame 0
 	li t2,0
 	sw t2,0(s0)
@@ -38,7 +40,8 @@ POOLING_LOOP:
 	move_player() 					# se nao tem input, pula a movimentacao
 	NO_INPUT:
 	print_player(s2, 0x50505050) # apaga player antigo
-	print_player(s1, 0x71717171) # escreve player atual
+	print_sapo()
+	###print_player(s1, 0x71717171) # escreve player atual
 		# TODO se sobrar tempo: otimizacao
 		# se posicao passada == atual
 		# nao precisa escrever pq ele ja ta la
