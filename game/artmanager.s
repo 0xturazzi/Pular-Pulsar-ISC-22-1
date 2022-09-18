@@ -25,29 +25,37 @@
 .end_macro
 
 	
-.macro print_sapo() 	# Printa um quadrado verde que eu to fingindo ser o player  
-	mv t0, s1
-	
-	add t0, s3, t0 	
-	la t1, sapo_spritesheet
-	addi t1, t1, 8
-	li t2, 12
+.macro print_sapo()
+	mv t0, s1 					# Importa a posicao
+	add t0, s3, t0 				# adiciona o endereco do buffer next
+
+	la t1, sapo_spritesheet 		# Importa endereco spritesheet
+	addi t1, t1, 8 				# Pula size
+
+	li t2, 12 					# look * width (12) ------> ajusta a posicao olhando
 	lb t3, look
 	mul t2, t2, t3
-	add t1,t1,t2
+	add t1,t1,t2 				
 	
-	li t4, 11
+
+	li t2, 48
+	lb t3, hp
+	mul t2, t2, t3
+	add t1, t1, t2
+
+	
+	li t4, 11 					# ctr: 12 linhas
 	VERT_DRAW:
-		lw t3, 0(t1)
-		sw t3, 0(t0)
-		lw t3, 4(t1)
-		sw t3, 4(t0)
+		lw t3, 0(t1) 			# Le spritesheet
+		sw t3, 0(t0)				# Printa na tela
+		lw t3, 4(t1)				# ...
+		sw t3, 4(t0)				# ...
 		lw t3, 8(t1)
 		sw t3, 8(t0)
 		
-		addi t1, t1, 144
-		addi t0, t0,320
-		addi t4,t4,-1
+		addi t1, t1, 144			# avanca linha spritesheet
+		addi t0, t0,320 			# avanca linha tela
+		addi t4,t4,-1			# diminui ctr
 		bgez t4, VERT_DRAW
 
 .end_macro

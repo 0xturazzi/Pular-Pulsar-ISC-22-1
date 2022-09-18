@@ -1,17 +1,22 @@
 .data
-look: .byte 0
+look: .byte 0					# direcao olhando
+vida: .byte 3 					# vida mostrada na UI
+hp: .byte 0 						# mudanca de cor: dano tomado 0->1->2->morte
+bullet_cnt: .byte 3 				# Municao
+bullet: .word 0,0,0 				# Posicao tiros
+bullet_dir : .byte 0,0,0 			# Direcao tiros
 
-.macro print_player(%reg1, %int) 	# Printa um quadrado verde que eu to fingindo ser o player  
-	mv t0, %reg1
-	li t3, %int
-	add t0, s3, t0 	
-	li t4, 11
+.macro print_player(%reg1, %int) 	# Printa um quadrado das mesmas dimensoes que o player  
+	mv t0, %reg1					# Pode ser usado para debugar o  movimento
+	li t3, %int					# ou para limpar o rastro do sprite
+	add t0, s3, t0 				# int = cor
+	li t4, 11					# reg = posicao
 	VERT_DRAW:
-		sw t3, 0(t0)
+		sw t3, 0(t0)				# escrita horizontal
 		sw t3, 4(t0)
 		sw t3, 8(t0)
 		
-		addi t0, t0,320
+		addi t0, t0,320 			# escrita vertical
 		addi t4,t4,-1
 		bgez t4, VERT_DRAW
 
@@ -38,16 +43,16 @@ UP:
 	ble s1, t0, END
 	addi s1,s1,-1280 	# "diminui" a posicao vertical em 320*4
 	li t1, 0
-	sw t1, look, t2
+	sb t1, look, t2
 	j END
 	
 DOWN:
 	mv s2,s1
-	li t0, 58880		# colisao com chao 320 x 184
+	li t0, 58880			# colisao com chao 320 x 184
 	bge s1, t0, END
 	addi s1,s1,1280 		# "aumenta" a posicao vertical em 320*4
 	li t1, 2
-	sw t1, look, t2
+	sb t1, look, t2
 	j END
 	
 LEFT:
@@ -58,7 +63,7 @@ LEFT:
 	ble t1, t0, END		# colisao com a parede da esquerda 20
 	addi s1,s1,-4
 	li t1, 3
-	sw t1, look, t2
+	sb t1, look, t2
 	j END
 	
 RIGHT:
@@ -69,9 +74,17 @@ RIGHT:
 	bge t1, t0, END		# colisao com a parede da direita 288
 	addi s1,s1,4
 	li t1, 1
-	sw t1, look, t2
+	sb t1, look, t2
 	j END
 	
 END:
 .end_macro
 
+.macro attack_player()
+	li t2, 32
+	beq t2, a0, ATK 		# barra de espaco
+	j END
+	ATK:
+						# checa se tem municao sobrando
+	END:
+.end_macro

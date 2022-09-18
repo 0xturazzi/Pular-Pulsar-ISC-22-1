@@ -11,3 +11,7 @@ Clone do jogo de arcade Pulsar. Feito com riscV assembly 32 bits
 - [piskel](https://www.piskelapp.com)
 - [Converter BMP .data](https://github.com/gss214/Gerenciador-de-Conversao)
 - [Referencia do jogo](https://www.youtube.com/watch?v=BTbygumOaWU)
+
+# Cheats
+- shift p : tomar dano
+- shift o : curar dano

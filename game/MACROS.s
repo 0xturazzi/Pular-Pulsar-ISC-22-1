@@ -1,19 +1,19 @@
-# # # # # # # #  
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # DATA 
-# # # # # # # # 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 .data
 newLine: .string "\n"
 
-# # # # # # # #  
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # CONSTANTES 
-# # # # # # # # 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 .eqv MMIO_add 0xff200004 # Receiver Data Register (ASCII)
 .eqv MMIO_set 0xff200000 # Receiver Control Register (Bool) : 1=dados, restaura pra 0 automaticamente quando usa lw MMIO_add
 
 
-# # # # # # # #  
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # MACROS GERAIS
-# # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 .text
 .macro syscall(%op)		# Multipos wrappers de syscall aceitando
 	li a7, %op 			# tanto instrucao e registrador ou valor
@@ -62,9 +62,9 @@ newLine: .string "\n"
 	syscall(11, %int)
 .end_macro
 
-# # # # # # # #  
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # MACROS TEMPO
-# # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 
 .macro get_time(%reg) 	# retorna o valor da syscall de tempo
@@ -91,9 +91,9 @@ newLine: .string "\n"
 	SKIP_WAIT: get_time(%reg)
 .end_macro
 
-# # # # # # # #  
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # MACROS DEBUG
-# # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 .macro print_frame()		# printa o frame atual na tela
 	li s0,0xFF200604	
@@ -187,9 +187,9 @@ newLine: .string "\n"
 			##### DEFINITIVO, VAI QUEBRAR O SISTEMA DE NEXT_FRAME
 			##### ELAS ALTERAM FRAMES MANUALMENTE
 
-# # # # # # # #  
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # MACROS SETUP
-# # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 .macro NEXT_FRAME() 		# Avancar frame
 	mv t1,s4				# troca s3 e s4 ----- BUFFER 0 e 1
@@ -226,3 +226,26 @@ newLine: .string "\n"
 			# s4 last write
 .end_macro
  
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# MACROS CHEAT
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+.macro cheat()
+	li t2, 80 			# P  (shift p) Take dmg (increase hp)
+	beq t2, a0, dmg
+	li t2, 79 			# O  (shift o) heal dmg (reduce hp)
+	beq t2, a0, heal
+	j end
+	
+	dmg:
+		lb t0, hp
+		addi t0, t0, 1
+		sb t0, hp, t1
+		j end
+	heal:
+		lb t0, hp
+		addi t0, t0, -1
+		sb t0, hp, t1
+		j end
+	end:
+.end_macro
