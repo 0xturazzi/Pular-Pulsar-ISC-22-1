@@ -135,6 +135,14 @@ newLine: .string "\n"
 	OUT:
 .end_macro
 
+.macro DEBUG_UPPER_LINE() 		# Printa a cor da linha acima do player
+	addi t1, s1, -320
+	add t1,t1, s3
+	lw t1, 0(t1)
+	print_hex(t1)
+	print_line()
+.end_macro
+
 .macro DEBUG_SCREEN_GREEN() 		# Analogamente Preenche FRAME 1 de verde
 	li s0,0xFF200604
 	li t2,1			

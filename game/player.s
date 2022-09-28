@@ -28,6 +28,8 @@ bullet_dir : .byte 0,0,0 			# Direcao tiros
 
 	# para todos os movimentos salva s1 em s2 (old position)
 
+
+
 	li t2, 119 			# w
 	beq t2, a0, UP
 	li t2, 115 			# s
@@ -38,40 +40,128 @@ bullet_dir : .byte 0,0,0 			# Direcao tiros
 	beq t2, a0, RIGHT
 	j END
 UP:
-	mv s2,s1
+	mv s2,s1 			# Salva posicao antiga
+
+	######## COLISOES 
+
+	li t3, 0x01 # cor colisao parede
+
 	li t0, 7680 			# colisao com teto 320 x 24
 	ble s1, t0, END
+	
+	addi t1, s1, -320 	# colisao cor parede
+	add t1,t1, s3	
+	
+	lw t2, 0(t1)				# word da esquerda
+	srli t2, t2, 24    		# byte esquerda
+	beq t2, t3, END
+	
+	addi t1, t1, 8			# word da direita
+	lw t2, 0(t1)
+	andi t2, t2, 0xff  		# byte direita
+	beq t2, t3, END
+
+	######## COLISOES 
+
 	addi s1,s1,-1280 	# "diminui" a posicao vertical em 320*4
 	li t1, 0
 	sb t1, look, t2
 	j END
 	
 DOWN:
-	mv s2,s1
+	mv s2,s1 			# Salva posicao antiga
+	
+	######## COLISOES 
+	
+	li t3, 0x01 # cor colisao parede
+
 	li t0, 58880			# colisao com chao 320 x 184
 	bge s1, t0, END
+	
+	li t4, 3840
+	add t1, s1, t4 	# colisao cor parede
+	add t1,t1, s3	
+	
+	lw t2, 0(t1)				# word da esquerda
+	srli t2, t2, 24    		# byte esquerda
+	beq t2, t3, END
+	
+	addi t1, t1, 8			# word da direita
+	lw t2, 0(t1)
+	andi t2, t2, 0xff  		# byte direita
+	beq t2, t3, END
+
+	
+	######## COLISOES
+	
 	addi s1,s1,1280 		# "aumenta" a posicao vertical em 320*4
 	li t1, 2
 	sb t1, look, t2
 	j END
 	
 LEFT:
-	mv s2,s1
+	mv s2,s1 			# Salva posicao antiga
+	
+	######## COLISOES 
+	
 	li t0, 20
 	li t3, 320
 	rem t1, s1, t3    	# extrai a posicao horizontal da posicao total
 	ble t1, t0, END		# colisao com a parede da esquerda 20
+	
+	li t3, 0x01 # cor colisao parede
+	
+	addi t1, s1, -4 	# colisao cor parede
+	add t1,t1, s3	
+	
+	lw t2, 0(t1)				# word de cima
+	srli t2, t2, 24    		# byte direita
+	beq t2, t3, END
+	
+	
+	li t4, 3520
+	add t1, t1, t4			# word de baixo
+	lw t2, 0(t1)
+	srli t2, t2, 24    		# byte direita
+	beq t2, t3, END	
+
+	######## COLISOES 
+	
+	
 	addi s1,s1,-4
 	li t1, 3
 	sb t1, look, t2
 	j END
 	
 RIGHT:
-	mv s2,s1
+	mv s2,s1 			# Salva posicao antiga
+	
+	######## COLISOES 
+	
 	li t0, 288
 	li t3, 320
 	rem t1, s1, t3 		# extrai a posicao horizontal da posicao total
 	bge t1, t0, END		# colisao com a parede da direita 288
+	
+	li t3, 0x01 # cor colisao parede
+	
+	addi t1, s1, 12 	# colisao cor parede
+	add t1,t1, s3	
+	
+	lb t2, 0(t1)				# word de cima
+	print_hex(t2)
+	print_line()
+	srli t2, t2, 24    		# byte esquerda
+	beq t2, t3, END
+	
+	
+	li t4, 3520
+	add t1, t1, t4			# word de baixo
+	lb t2, 0(t1)				# byte esquerda
+	beq t2, t3, END	
+
+	######## COLISOES 
+	
 	addi s1,s1,4
 	li t1, 1
 	sb t1, look, t2
