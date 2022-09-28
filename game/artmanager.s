@@ -1,6 +1,7 @@
 .data
 .include "../game/data/background.data"
 .include "../game/data/sapo_spritesheet.data"
+.include "../game/data/heart.data"
 
 .text
 .macro print_bg()
@@ -58,4 +59,32 @@
 		addi t4,t4,-1			# diminui ctr
 		bgez t4, VERT_DRAW
 
+.end_macro
+
+.macro print_atk()
+	mv t0, s1 					# Importa a posicao
+	add t0, s3, t0 				# adiciona o endereco do buffer next
+
+	lb t1, look 					# centralize bullet
+	li t2, 2
+	rem t1, t1, t2 
+	bnez t1, leftright
+	addi t0,t0 4
+	 j end_center
+	leftright:
+		addi t0, t0, 1280
+	end_center:
+
+	la t1, heart 				# Importa endereco spritesheet
+	addi t1, t1, 8 				# Pula size
+	
+	li t4, 3 					# ctr: 4 linhas
+	VERT_DRAW:
+		lw t3, 0(t1) 			# Le spritesheet
+		sw t3, 0(t0)				# Printa na tela
+		
+		addi t1, t1, 4			# avanca linha spritesheet
+		addi t0, t0,320 			# avanca linha tela
+		addi t4,t4,-1			# diminui ctr
+		bgez t4, VERT_DRAW
 .end_macro

@@ -85,6 +85,8 @@ END:
 	beq t2, a0, ATK 		# barra de espaco
 	j END
 	ATK:
-						# checa se tem municao sobrando
+	lb t2, bullet_cnt					# checa se tem municao sobrando
+	blez t2, END
+	print_atk()
 	END:
 .end_macro
