@@ -149,9 +149,9 @@ RIGHT:
 	add t1,t1, s3	
 	
 	lb t2, 0(t1)				# word de cima
-	print_hex(t2)
-	print_line()
-	srli t2, t2, 24    		# byte esquerda
+	#print_hex(t2)
+	#print_line()
+	lb t2, 0(t1)	    		# byte esquerda
 	beq t2, t3, END
 	
 	
