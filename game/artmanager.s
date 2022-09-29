@@ -6,6 +6,12 @@
 .include "../game/data/heart.data"
 
 .text
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# BAcKGROUND
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+
 .macro print_bg()
 	mv t1,s3	# endereco inicial da Memoria VGA
 	
@@ -48,6 +54,11 @@
 	OUT:
 .end_macro
 	
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# PLAYER
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
 .macro print_sapo()
 	mv t0, s1 					# Importa a posicao
 	add t0, s3, t0 				# adiciona o endereco do buffer next
@@ -83,19 +94,33 @@
 
 .end_macro
 
-.macro print_atk()
-	mv t0, s1 					# Importa a posicao
-	add t0, s3, t0 				# adiciona o endereco do buffer next
+.macro print_player(%reg1, %int) 	# Printa um quadrado das mesmas dimensoes que o player  
+	mv t0, %reg1					# Pode ser usado para debugar o  movimento
+	li t3, %int					# ou para limpar o rastro do sprite
+	add t0, s3, t0 				# int = cor
+	li t4, 11					# reg = posicao
+	VERT_DRAW:
+		sw t3, 0(t0)				# escrita horizontal
+		sw t3, 4(t0)
+		sw t3, 8(t0)
+		
+		addi t0, t0,320 			# escrita vertical
+		addi t4,t4,-1
+		bgez t4, VERT_DRAW
 
-	lb t1, look 					# centralize bullet
-	li t2, 2
-	rem t1, t1, t2 
-	bnez t1, leftright
-	addi t0,t0 4
-	 j end_center
-	leftright:
-		addi t0, t0, 1280
-	end_center:
+.end_macro
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# ATAQUE PLAYER
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+
+.macro print_atk()
+	lw t0, bullet				# Importa a posicao
+	beqz t0, END
+	
+	add t0, s3, t0 				# adiciona o endereco do buffer next
 
 	la t1, heart 				# Importa endereco spritesheet
 	addi t1, t1, 8 				# Pula size
@@ -109,4 +134,22 @@
 		addi t0, t0,320 			# avanca linha tela
 		addi t4,t4,-1			# diminui ctr
 		bgez t4, VERT_DRAW
+	END:
+.end_macro
+
+.macro delete_atk()
+	lw t0, bullet_prev
+	beqz t0, END
+	
+	
+	li t3, 0x50505050			# limpar o rastro do sprite
+	add t0, s4, t0 				# int = cor
+	li t4, 3
+	VERT_DRAW:
+		sw t3, 0(t0)				# escrita horizontal
+		
+		addi t0, t0,320 			# escrita vertical
+		addi t4,t4,-1
+		bgez t4, VERT_DRAW
+	END:
 .end_macro
