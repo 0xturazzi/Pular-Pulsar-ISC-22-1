@@ -3,7 +3,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 .data
 newLine: .string "\n"
-
+slow_count: .byte -1
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # CONSTANTES 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -234,10 +234,38 @@ newLine: .string "\n"
 			# s4 last write
 .end_macro
  
+.macro get_slow_count(%reg) 	# le a count de desaceleracao
+	lb %reg, slow_count
+.end_macro
+
+.macro next_slow_count() 	# decresce
+	lb t0, slow_count		# entidades desaceleradas so podem mover quando o counter == 0
+	
+	bltz t0, RESET
+	addi t0, t0, -1
+	j END
+	RESET:
+		li t0, 31
+	END:
+		sb t0, slow_count, t1
+.end_macro
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# MACROS MATEMATICA
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+.macro abs(%reg) 				# absoluto inteiros
+	bgez %reg, END 	
+	NEG:
+		sub %reg, zero, %reg
+	END:
+.end_macro
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # MACROS CHEAT
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
 .macro cheat()
 	li t2, 80 			# P  (shift p) Take dmg (increase hp)
 	beq t2, a0, dmg

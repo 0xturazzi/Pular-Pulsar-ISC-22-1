@@ -5,12 +5,13 @@
 .include "../game/data/sapo_spritesheet.data"
 .include "../game/data/heart.data"
 
+.include "../game/data/viloes.data"
+
 .text
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # BAcKGROUND
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-
 
 .macro print_bg()
 	mv t1,s3	# endereco inicial da Memoria VGA
@@ -54,7 +55,6 @@
 	OUT:
 .end_macro
 	
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # PLAYER
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -91,7 +91,6 @@
 		addi t0, t0,320 			# avanca linha tela
 		addi t4,t4,-1			# diminui ctr
 		bgez t4, VERT_DRAW
-
 .end_macro
 
 .macro print_player(%reg1, %int) 	# Printa um quadrado das mesmas dimensoes que o player  
@@ -110,13 +109,12 @@
 
 .end_macro
 
-
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # ATAQUE PLAYER
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 
-.macro print_atk()
+.macro print_atk()				# printa ataque coracao
 	lw t0, bullet				# Importa a posicao
 	beqz t0, END
 	
@@ -137,7 +135,7 @@
 	END:
 .end_macro
 
-.macro delete_atk()
+.macro delete_atk() 				# delete rastro coracao
 	lw t0, bullet_prev
 	beqz t0, END
 	
@@ -150,6 +148,59 @@
 		
 		addi t0, t0,320 			# escrita vertical
 		addi t4,t4,-1
+		bgez t4, VERT_DRAW
+	END:
+.end_macro
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# ABELHA
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+.macro print_abelha(%pos)#, %vida) 		# print sprite abelha
+									# todo: implementar vida(?)
+	mv t0, %pos 					# Importa a posicao
+	beqz t0, END
+	
+	add t0, s3, t0 				# adiciona o endereco do buffer next
+
+	la t1, viloes		 		# Importa endereco spritesheet
+	addi t1, t1, 8 				# Pula size
+
+#	li t2, 48
+#	lb t3, hp
+#	mul t2, t2, t3
+#	add t1, t1, t2
+
+	
+	li t4, 7 					# ctr: 12 linhas
+	VERT_DRAW:
+		lw t3, 0(t1) 			# Le spritesheet
+		sw t3, 0(t0)				# Printa na tela
+		lw t3, 4(t1)				# ...
+		sw t3, 4(t0)				# ...
+
+		
+		addi t1, t1, 32			# avanca linha spritesheet
+		addi t0, t0,320 			# avanca linha tela
+		addi t4,t4,-1			# diminui ctr
+		bgez t4, VERT_DRAW
+	END:
+.end_macro
+
+.macro del_abelha(%pos)			# limpar rastro abelha
+	mv t0, %pos 					# Importa a posicao
+	beqz t0, END
+	
+	add t0, s4, t0 				# adiciona o endereco do buffer next
+
+
+	li t3, 0x50505050			# limpar o rastro do sprite
+	li t4, 7 					# ctr: 12 linhas
+	VERT_DRAW:
+		sw t3, 0(t0)				# Printa na tela
+		sw t3, 4(t0)				# ...
+
+		addi t0, t0,320 			# avanca linha tela
+		addi t4,t4,-1			# diminui ctr
 		bgez t4, VERT_DRAW
 	END:
 .end_macro

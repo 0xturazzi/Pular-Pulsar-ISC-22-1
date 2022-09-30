@@ -166,6 +166,11 @@ RIGHT:
 END:
 .end_macro
 
+.macro player_dano()
+	lb t0, hp
+	addi t0, t0, 1
+	sb t0, hp, t1
+.end_macro
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # ATAQUE
@@ -325,7 +330,5 @@ END:
 		la t4, bullet 			# deleta bullet
 		sw t0, 0(t4)
 		
-		#####li t4, 1
-##############################print_hex(t4)
 	END_DRAW:
 .end_macro
