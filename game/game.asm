@@ -11,6 +11,7 @@
 .include "abelha.s"
 .include "level1.s"
 .include "level0.s"
+
 .text
 MAIN:
 	setup_level_0()

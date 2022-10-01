@@ -151,8 +151,8 @@ col_tiro:
 	li t3, 10
 	bgt t5, t3, NO_COL
 
-	#ebreak
-	li %pos,0
+	TEVE COLISAO:
+		li %pos,0
 		li t0, 0
 		la t4, bullet 	# deleta bullet
 		sw t0, 0(t4)
@@ -160,6 +160,8 @@ col_tiro:
 		li t0, 0
 		la t4, bullet_prev 	# deleta bullet_prev
 		sw t0, 0(t4)
+		
+		player_refil_gas() 	# enche da gasolina / carencia
 	j NO_COL
 
 col_player:

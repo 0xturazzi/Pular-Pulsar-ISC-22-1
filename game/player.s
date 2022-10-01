@@ -2,6 +2,7 @@
 look: .byte 0					# direcao olhando
 vida: .byte 3 					# vida mostrada na UI
 hp: .byte 0 						# mudanca de cor: dano tomado 0->1->2->morte
+gas: .byte 10					# gasolina / carencia
 
 bullet: .word 0	 				# Posicao tiro
 bullet_prev: .word 0	 			# Posicao prev tiro
@@ -166,10 +167,31 @@ RIGHT:
 END:
 .end_macro
 
-.macro player_dano()
+.macro player_dano() 	# dano no hp (cor)
 	lb t0, hp
 	addi t0, t0, 1
 	sb t0, hp, t1
+.end_macro
+
+
+.macro player_die() 		# dano na vida (interface)
+	exit()
+.end_macro
+
+.macro player_gas()
+	next_gas_count(t0)
+	bnez t0, END 		# pula se nao ta na hora de diminuir
+	lb t0, gas 
+	addi t0, t0, -1
+	sb t0, gas, t1
+	bgtz t0, END 		# pula se gas > 0
+	player_die() 		# morre
+	END:
+.end_macro
+
+.macro player_refil_gas()
+	li t0, 10
+	sb t0, gas, t1
 .end_macro
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 

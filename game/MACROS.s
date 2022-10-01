@@ -1,12 +1,21 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # DATA 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# DATA e COUNTS 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
 .data
 newLine: .string "\n"
 slow_count: .byte -1
+super_slow_count: .byte -1
+gas_count: .byte -1
+refresh_count: .byte -1
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # CONSTANTES 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
 .eqv MMIO_add 0xff200004 # Receiver Data Register (ASCII)
 .eqv MMIO_set 0xff200000 # Receiver Control Register (Bool) : 1=dados, restaura pra 0 automaticamente quando usa lw MMIO_add
 
@@ -14,6 +23,7 @@ slow_count: .byte -1
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # MACROS GERAIS
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
 .text
 .macro syscall(%op)		# Multipos wrappers de syscall aceitando
 	li a7, %op 			# tanto instrucao e registrador ou valor
@@ -250,6 +260,18 @@ slow_count: .byte -1
 		sb t0, slow_count, t1
 .end_macro
 
+.macro next_gas_count(%reg) 	# decresce a gasolina/carencia
+	lb t0, gas_count	 
+	
+	bltz t0, RESET
+	addi t0, t0, -1
+	j END
+	RESET:
+		li t0, 100
+	END:
+		mv %reg, t0
+		sb t0, gas_count, t1
+.end_macro
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # MACROS MATEMATICA
@@ -284,4 +306,37 @@ slow_count: .byte -1
 		sb t0, hp, t1
 		j end
 	end:
+.end_macro
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# MACROS LEVEL
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+.macro level_update_input()
+	NEXT_FRAME()					# Prox frame
+	#dump_regs() 						# Ignorar: DEBUG
+	
+	li t0, MMIO_set 					# Checar se tem input para ler
+	lb t1, 0(t0)
+	beqz t1, NO_INPUT				# se nao tem input, pula a movimentacao
+	lw a0, MMIO_add					# Endereco Dados MMIO
+	#syscall(11)						# Ignorar: DEBUG
+
+	cheat() 						# checar input de cheat
+
+	move_player() 					# se nao tem input, pula a movimentacao
+	attack_player()					# checar input de ataque
+	NO_INPUT:
+.end_macro
+
+.macro level_update_player_actions() # acoes do player e counts relacionadas
+		next_slow_count()
+		player_gas()
+		
+		move_bullet() 				# ataque do player
+		delete_atk()
+		print_atk()
+	
+		print_player(s2, 0x50505050) 	# apaga player antigo
+		print_sapo()					# print sprite do player 
+
 .end_macro
