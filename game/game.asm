@@ -10,12 +10,12 @@
 .include "MACROS.s"
 .include "abelha.s"
 .include "level1.s"
-
+.include "level0.s"
 .text
 MAIN:
-	setup_level_1()
+	setup_level_0()
 POOLING_LOOP:
-	update_level_1()
+	update_level_0()
 	j POOLING_LOOP
 	exit()
 
