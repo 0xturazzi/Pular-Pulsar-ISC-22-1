@@ -197,19 +197,7 @@ END:
 	la t4, bullet_dir
 	sb t1, 0(t4)
 
-	j end_center ##################################################################
-				
-	li t2, 2 			# centraliza
-	rem t1, t1, t2 
-	bnez t1, leftright
-	addi t0,t0 4
-
-	leftright:
-		addi t0, t0, 1280
-	end_center:
-
-	############################################## END CENTER
-	addi t0, t0,  1924
+	addi t0, t0,  1924 	# opcional: spawna o tiro mais bonitinho, mas torna mirar mais dificil
 
 	la t4, bullet
 	sw t0, 0(t4) 		# salva posicao tiro

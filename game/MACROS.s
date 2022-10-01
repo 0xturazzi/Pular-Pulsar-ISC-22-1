@@ -245,7 +245,7 @@ slow_count: .byte -1
 	addi t0, t0, -1
 	j END
 	RESET:
-		li t0, 31
+		li t0, 16
 	END:
 		sb t0, slow_count, t1
 .end_macro

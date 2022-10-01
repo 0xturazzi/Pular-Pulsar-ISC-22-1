@@ -96,8 +96,8 @@
 .macro print_player(%reg1, %int) 	# Printa um quadrado das mesmas dimensoes que o player  
 	mv t0, %reg1					# Pode ser usado para debugar o  movimento
 	li t3, %int					# ou para limpar o rastro do sprite
-	add t0, s3, t0 				# int = cor
-	li t4, 11					# reg = posicao
+	add t0, s3, t0 				# 		int = cor
+	li t4, 11					# 		reg = posicao
 	VERT_DRAW:
 		sw t3, 0(t0)				# escrita horizontal
 		sw t3, 4(t0)

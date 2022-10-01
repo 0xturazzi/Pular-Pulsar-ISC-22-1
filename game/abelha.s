@@ -10,9 +10,11 @@
 	
 	beq t1, s1, col_player 	# colisao com player
 
-	
-	bgt t1,s1, UP 	# abelha > player: abelha em baixo 	-> move up							
-	blt t1,s1, DOWN 	# abelha < player: abelha em cima 	-> move down
+	li t3, 320
+	div t2,t1,t3
+	div t4, s1, t3
+	bgt t2,t4, UP 	# abelha > player: abelha em baixo 	-> move up							
+	blt t2,t4, DOWN 	# abelha < player: abelha em cima 	-> move down
 
 	left_right:
 	li t3, 320
@@ -32,21 +34,22 @@ UP:
 
 	li t3, 0x01 				# cor parede
 
-	addi t4, t1, -320 		# colisao cor parede
-	add t4,t1, s3	
+	li t4, -320	
+	add t4, t1, t4 			# colisao cor parede
+	add t4,t4, s3	
 	
 	lw t2, 0(t4)				# word da esquerda
 	srli t2, t2, 24    		# byte esquerda
 	beq t2, t3, left_right
 	
-	addi t4, t4, 8			# word da direita
+	addi t4, t4, 4			# word da direita
 	lw t2, 0(t4)
 	andi t2, t2, 0xff  		# byte direita
 	beq t2, t3, left_right
 
 	######## COLISOES 
 
-	addi t1,t1,-1280 		# "diminui" a posicao vertical em 320*4
+	addi t1,t1,-320 		# "diminui" a posicao vertical em 320*4
 	j left_right
 	
 DOWN:
@@ -71,7 +74,7 @@ DOWN:
 	
 	######## COLISOES
 	
-	addi t1,t1,1280 			# "aumenta" a posicao vertical em 320*4
+	addi t1,t1, 320 			# "aumenta" a posicao vertical em 320*4
 	j left_right
 	
 LEFT:
@@ -137,21 +140,25 @@ col_tiro:
 	
 	sub t5,t4,t5
 	abs(t5)
-	li t6, 5
+	li t6, 10
 	bgt t5, t6, NO_COL
 	
 	
-	rem t4, t2, t3	# diferenca vert
-	rem t5, t1, t3
+	div t4, t2, t3	# diferenca vert
+	div t5, t1, t3
 	sub t5,t5,t4
 	abs(t5)
-	li t3, 5
+	li t3, 10
 	bgt t5, t3, NO_COL
 
-	
+	#ebreak
 	li %pos,0
 		li t0, 0
 		la t4, bullet 	# deleta bullet
+		sw t0, 0(t4)
+		
+		li t0, 0
+		la t4, bullet_prev 	# deleta bullet_prev
 		sw t0, 0(t4)
 	j NO_COL
 

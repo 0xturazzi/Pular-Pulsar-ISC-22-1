@@ -17,6 +17,9 @@
 	
 	# como tem poucos inimigos, da pra usar register pra posicao
 	li s7, 0x7380                    # ABELHA
+	li s8, 0x0000d27c
+	li s9, 0x000050ec 
+	li s10, 0x00006e2c      
 .end_macro
 
 .macro update_level_1()
@@ -45,5 +48,10 @@
 
 		move_abelha(s7)					# Abelha s7
 		print_abelha(s7)
-
+		move_abelha(s8)					# Abelha s8
+		print_abelha(s8)
+		move_abelha(s9)					# Abelha s9
+		print_abelha(s9)
+		move_abelha(s10)					# Abelha s10
+		print_abelha(s10)
 .end_macro
