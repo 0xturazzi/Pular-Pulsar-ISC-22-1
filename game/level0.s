@@ -25,7 +25,7 @@
 	level_update_input()
 	
 	level_update_player_actions()
-		
+	
 	move_abelha(s7)					# Abelha s7
 	print_abelha(s7)
 	move_abelha(s8)					# Abelha s8

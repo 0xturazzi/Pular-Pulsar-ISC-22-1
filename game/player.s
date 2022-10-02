@@ -171,11 +171,26 @@ END:
 	lb t0, hp
 	addi t0, t0, 1
 	sb t0, hp, t1
+	li t1, 3
+	bne t0, t1, END
+	player_die()
+	END:
 .end_macro
 
 
 .macro player_die() 		# dano na vida (interface)
+	
+	li t3, 3
+	lb t2, vida
+	bne t3, t2, END
 	exit()
+	END:
+	sb zero, hp, t0
+	li t0, 10
+	sb t0, gas, t1
+	setup_level_0()
+	
+	
 .end_macro
 
 .macro player_gas()

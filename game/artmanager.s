@@ -101,7 +101,7 @@
 	li t4, 720
 	add t0, t0, t4
 	li t4, 7 					# ctr: 7 linhas
-	VERT_DRAW:
+	VERT_DRAW:								# UNROLL DO FOR -LOOP: MAIS EFICIENTE
 		
         lw t3, 0(t1) # Le spritesheet
         sw t3, 0(t0) # Printa na tela

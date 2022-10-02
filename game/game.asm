@@ -19,5 +19,4 @@ POOLING_LOOP:
 	ui_print_gas() 
 	update_level_0()
 	j POOLING_LOOP
-	exit()
 

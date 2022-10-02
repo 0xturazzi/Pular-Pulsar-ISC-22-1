@@ -165,8 +165,9 @@ col_tiro:
 	j NO_COL
 
 col_player:
-	player_dano()
 	li %pos, 0
+	player_dano()
+
 NO_COL:
 	
 .end_macro
