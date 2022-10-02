@@ -8,6 +8,8 @@
 
 .include "../game/data/viloes.data"
 
+.include "../game/data/carencia.data"
+
 .text
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -76,7 +78,106 @@
 		j LOOP			
 	OUT:
 .end_macro
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# UI
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+.macro ui_print_vida()
+	lb t0, vida
 	
+.end_macro
+
+.macro ui_print_gas() 	# printa gasolina
+	lb t0, gas
+	li t1, 736 # 92 * 8
+	mul t0, t0, t1 		# posicao na spritesheet
+	
+	la t2, carencia
+	addi t1,t2,8 		# skip size
+	add t1, t1, t0 		# posicao na spritesheet	
+	
+	addi t0, s3,  340 	# posicao na tela
+	li t4, 720
+	add t0, t0, t4
+	li t4, 7 					# ctr: 7 linhas
+	VERT_DRAW:
+		
+        lw t3, 0(t1) # Le spritesheet
+        sw t3, 0(t0) # Printa na tela
+        lw t3, 4(t1) # Le spritesheet
+        sw t3, 4(t0) # Printa na tela
+        lw t3, 8(t1) # Le spritesheet
+        sw t3, 8(t0) # Printa na tela
+        lw t3, 12(t1) # Le spritesheet
+        sw t3, 12(t0) # Printa na tela
+        lw t3, 16(t1) # Le spritesheet
+        sw t3, 16(t0) # Printa na tela
+        lw t3, 20(t1) # Le spritesheet
+        sw t3, 20(t0) # Printa na tela
+        lw t3, 24(t1) # Le spritesheet
+        sw t3, 24(t0) # Printa na tela
+        lw t3, 28(t1) # Le spritesheet
+        sw t3, 28(t0) # Printa na tela
+        lw t3, 32(t1) # Le spritesheet
+        sw t3, 32(t0) # Printa na tela
+        lw t3, 36(t1) # Le spritesheet
+        sw t3, 36(t0) # Printa na tela
+        lw t3, 40(t1) # Le spritesheet
+        sw t3, 40(t0) # Printa na tela
+        lw t3, 44(t1) # Le spritesheet
+        sw t3, 44(t0) # Printa na tela
+        lw t3, 48(t1) # Le spritesheet
+        sw t3, 48(t0) # Printa na tela
+        lw t3, 52(t1) # Le spritesheet
+        sw t3, 52(t0) # Printa na tela
+        lw t3, 56(t1) # Le spritesheet
+        sw t3, 56(t0) # Printa na tela
+        lw t3, 60(t1) # Le spritesheet
+        sw t3, 60(t0) # Printa na tela
+        lw t3, 64(t1) # Le spritesheet
+        sw t3, 64(t0) # Printa na tela
+        lw t3, 68(t1) # Le spritesheet
+        sw t3, 68(t0) # Printa na tela
+        lw t3, 72(t1) # Le spritesheet
+        sw t3, 72(t0) # Printa na tela
+        lw t3, 76(t1) # Le spritesheet
+        sw t3, 76(t0) # Printa na tela
+        lw t3, 80(t1) # Le spritesheet
+        sw t3, 80(t0) # Printa na tela
+        lw t3, 84(t1) # Le spritesheet
+        sw t3, 84(t0) # Printa na tela
+        lw t3, 88(t1) # Le spritesheet
+        sw t3, 88(t0) # Printa na tela
+        	
+		addi t1, t1, 92			# avanca linha spritesheet
+		addi t0, t0,320 			# avanca linha tela
+		addi t4,t4,-1			# diminui ctr
+		bgez t4, VERT_DRAW
+	END:
+	
+	
+.end_macro
+
+
+.macro print_gas()				# printa ataque coracao
+	add t0, s3, t0 				# adiciona o endereco do buffer next
+
+	la t1, heart 				# Importa endereco spritesheet
+	addi t1, t1, 8 				# Pula size
+	
+	li t4, 3 					# ctr: 4 linhas
+	VERT_DRAW:
+		lw t3, 0(t1) 			# Le spritesheet
+		sw t3, 0(t0)				# Printa na tela
+		
+		addi t1, t1, 4			# avanca linha spritesheet
+		addi t0, t0,320 			# avanca linha tela
+		addi t4,t4,-1			# diminui ctr
+		bgez t4, VERT_DRAW
+	END:
+.end_macro
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # PLAYER
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 

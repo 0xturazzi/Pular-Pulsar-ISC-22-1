@@ -1,6 +1,6 @@
 .data
 look: .byte 0					# direcao olhando
-vida: .byte 3 					# vida mostrada na UI
+vida: .byte 0 					# vida mostrada na UI
 hp: .byte 0 						# mudanca de cor: dano tomado 0->1->2->morte
 gas: .byte 10					# gasolina / carencia
 

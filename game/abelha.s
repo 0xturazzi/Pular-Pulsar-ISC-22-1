@@ -151,7 +151,7 @@ col_tiro:
 	li t3, 10
 	bgt t5, t3, NO_COL
 
-	TEVE COLISAO:
+	TEVE_COLISAO:
 		li %pos,0
 		li t0, 0
 		la t4, bullet 	# deleta bullet
