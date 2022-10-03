@@ -2,6 +2,8 @@
 	SETUP_DATA()					# setup .data (combustivel/hp) apos morte
 	SETUP_REGS() 					# Setup registradores reservados
 
+	li t0, 2
+	sb t0, flor_win, t1
 
 	# Printa o Background e player nos 2 buffers
 	print_map1()
@@ -29,12 +31,12 @@
 	
 	level_update_player_actions() 	# acoes do player: mover, atirar, avancar posicao do tiro, etc
 		
-	move_abelha(s7)					# Abelha s7
+	#move_abelha(s7)					# Abelha s7
 	print_abelha(s7)
-	move_abelha(s8)					# Abelha s8
-	print_abelha(s8)
-	move_abelha(s9)					# Abelha s9
-	print_abelha(s9)
-	move_abelha(s10)					# Abelha s10
-	print_abelha(s10)
+	#move_abelha(s8)					# Abelha s8
+	#print_abelha(s8)
+	#move_abelha(s9)					# Abelha s9
+	#print_abelha(s9)
+	#move_abelha(s10)					# Abelha s10
+	#print_abelha(s10)
 .end_macro

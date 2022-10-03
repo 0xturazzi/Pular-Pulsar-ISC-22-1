@@ -14,9 +14,20 @@
 
 .text
 MAIN:
-	setup_level_0()
+	sb zero, died, t0
+	setup_current_level()
+	
 POOLING_LOOP:
 	update_ui()
 	update_level_0()
-	j POOLING_LOOP
-
+	#update_current_level()
+	
+	lb t0, died
+	bnez t0, MAIN
+	
+	lb t0, flor_win
+	bnez t0, POOLING_LOOP
+	lb t0, current_level
+	addi t0, t0, 1
+	sb t0, current_level, t1
+	j MAIN

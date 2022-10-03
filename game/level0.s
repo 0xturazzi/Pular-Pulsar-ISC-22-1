@@ -1,3 +1,6 @@
+.data
+flor_win: .byte 1
+.text
 .macro setup_level_0()
 	SETUP_DATA()					# setup .data (combustivel/hp) apos morte
 	SETUP_REGS() 					# Setup registradores reservados
@@ -29,8 +32,8 @@
 	
 	move_abelha(s7)					# Abelha s7
 	print_abelha(s7)
-	move_abelha(s8)					# Abelha s8
-	print_abelha(s8)
-	move_abelha(s9)					# Abelha s9
-	print_abelha(s9)
+	#move_abelha(s8)					# Abelha s8
+	#print_abelha(s8)
+	#move_abelha(s9)					# Abelha s9
+	#print_abelha(s9)
 .end_macro

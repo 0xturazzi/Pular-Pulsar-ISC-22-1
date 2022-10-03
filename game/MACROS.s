@@ -11,6 +11,7 @@ slow_count: .byte -1
 super_slow_count: .byte -1
 gas_count: .word -1
 refresh_count: .word -1
+current_level: .byte 0
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # CONSTANTES 
@@ -301,6 +302,8 @@ refresh_count: .word -1
 	beq t2, a0, dmg
 	li t2, 79 			# O  (shift o) heal dmg (reduce hp)
 	beq t2, a0, heal
+	li t2, 76
+	beq t2, a0, free_flower	# L (shift l) flor
 	j end
 	
 	
@@ -314,6 +317,11 @@ refresh_count: .word -1
 		lb t0, hp
 		addi t0, t0, -1
 		sb t0, hp, t1
+		j end
+	free_flower:
+		lb t0, flor_win
+		addi t0, t0, -1
+		sb t0, flor_win, t1
 		j end
 	end:
 .end_macro
@@ -354,4 +362,37 @@ refresh_count: .word -1
 .macro update_ui()
 	ui_print_gas()
 	ui_print_vida()
+.end_macro
+
+.macro update_current_level()
+	lb t0, current_level
+	beqz t0, lv0
+	addi t0, t0, -1
+	beqz t0, lv1
+	j END
+	
+	lv0: 
+		update_level_0()
+		j END
+	lv1:
+		update_level_1()
+		j END
+	
+	END:
+.end_macro
+.macro setup_current_level()
+	lb t0, current_level
+	beqz t0, lv0
+	addi t0, t0, -1
+	beqz t0, lv1
+	j END
+	
+	lv0: 
+		setup_level_0()
+		j END
+	lv1:
+		setup_level_1()
+		j END
+	
+	END:
 .end_macro

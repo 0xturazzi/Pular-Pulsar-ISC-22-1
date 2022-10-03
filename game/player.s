@@ -8,6 +8,7 @@ bullet: .word 0	 				# Posicao tiro
 bullet_prev: .word 0	 			# Posicao prev tiro
 bullet_dir : .byte 0				# Direcao tiro
 
+died: .byte 0
 
 
 .text
@@ -189,7 +190,8 @@ END:
 	exit()
 	END:
 
-	setup_level_0()
+	li t1, 1
+	sb t1, died, t2
 
 .end_macro
 
