@@ -15,3 +15,4 @@ Clone do jogo de arcade Pulsar. Feito com riscV assembly 32 bits
 # Cheats
 - shift p : tomar dano
 - shift o : curar dano
+- shift l (nao usar): ganha uma flor
