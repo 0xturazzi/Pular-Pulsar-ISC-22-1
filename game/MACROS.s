@@ -233,8 +233,8 @@ current_level: .byte 0
 .end_macro
 
 .macro SETUP_DATA()
-	sb zero, hp, t0
-	li t0, 10
+	sb zero, hp, t0 		# reseta o dano recebido
+	li t0, 10			# reseta gasolina / carencia
 	sb t0, gas, t1
 .end_macro
 
@@ -249,6 +249,10 @@ current_level: .byte 0
 			# s3 next write
 			# s4 last write
 .end_macro
+ 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# MACROS COUNT
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
  
 .macro get_slow_count(%reg) 	# le a count de desaceleracao
 	lb %reg, slow_count
@@ -273,7 +277,7 @@ current_level: .byte 0
 	addi t0, t0, -1
 	j END
 	RESET:
-		li t0, gas_count_reset 
+		li t0, gas_count_reset
 	END:
 		mv %reg, t0
 		sw t0, gas_count, t1
@@ -283,7 +287,7 @@ current_level: .byte 0
 # MACROS MATEMATICA
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
-.macro abs(%reg) 				# absoluto inteiros
+.macro abs(%reg) 				# absoluto numeros inteiros
 	bgez %reg, END 	
 	NEG:
 		sub %reg, zero, %reg
@@ -329,9 +333,6 @@ current_level: .byte 0
 .macro level_update_input()
 	NEXT_FRAME()					# Prox frame
 	#dump_regs() 						# Ignorar: DEBUG
-	lw t0, pos_flor
-	print_hex(t0)
-	print_line()
 		
 	li t0, MMIO_set 					# Checar se tem input para ler
 	lb t1, 0(t0)
@@ -360,31 +361,16 @@ current_level: .byte 0
 .end_macro                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
 .macro update_ui()
-	ui_print_gas()
-	ui_print_vida()
+	ui_print_gas()				# print gasolina / carencia topo centro-esquerda
+	ui_print_vida()				# print vida canto inferior centro-direita
+	ui_print_cesta()			# print cesta de flores coletadas canto inferior direito
 .end_macro
 
-.macro update_current_level()
-	lb t0, current_level
+.macro setup_current_level() 	# dinamicamente da setup no nivel
+	lb t0, current_level			# baseado no conteudo da variavel current_level
 	beqz t0, lv0
-	addi t0, t0, -1
-	beqz t0, lv1
-	j END
-	
-	lv0: 
-		update_level_0()
-		j END
-	lv1:
-		update_level_1()
-		j END
-	
-	END:
-.end_macro
-.macro setup_current_level()
-	lb t0, current_level
-	beqz t0, lv0
-	addi t0, t0, -1
-	beqz t0, lv1
+	addi t0, t0, -1				# Isso nao e' nescessario para o update_levl
+	beqz t0, lv1					# visto que todos leveis tem runtime igual
 	addi t0, t0, -1
 	beqz t0, lv2
 	j END

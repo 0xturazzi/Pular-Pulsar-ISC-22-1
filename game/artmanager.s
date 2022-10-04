@@ -7,9 +7,12 @@
 .include "../game/data/heart.data"
 
 .include "../game/data/viloes.data"
+.include "../game/data/besouro.data"
+.include "../game/data/pedra.data"
 
 .include "../game/data/carencia.data"
 .include "../game/data/vidamenu.data"
+.include "../game/data/cesta.data"
 
 .include "../game/data/flores_sprite.data"
 .text
@@ -39,7 +42,7 @@
 	OUT:
 .end_macro
 
-.macro print_map1()
+.macro print_map1()		# printa o mapa do level 1
 	mv t1,s3				# endereco inicial da Memoria VGA
 	
 	la t4, map1
@@ -60,7 +63,7 @@
 	OUT:
 .end_macro
 
-.macro print_map0()
+.macro print_map0()		# printa o mapa do level 0
 	mv t1,s3				# endereco inicial da Memoria VGA
 	
 	la t4, map0
@@ -84,10 +87,10 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # FLOR
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-.macro print_flor()
+.macro print_flor()			# printa a flor a ser coletada (ajuste de cor)
 	lb t0, flor_win
 
-	addi t0, t0, -1 			# 12 * (flor_win-1 + current_level)
+	addi t0, t0, -1 			# cor = 12 * (flor_win-1 + current_level)
 	lb t1, current_level
 	add t0, t0, t1
 	li t1, 12
@@ -99,7 +102,7 @@
 	
 	lw t0, pos_flor
 	add t0, t0, s3 			# posicao na tela
-	li t4, 11 				# ctr: 11 linhas
+	li t4, 11 				# ctr: 12 linhas
 	VERT_DRAW:
 		
      	lw t3, 0(t1) # Le spritesheet
@@ -117,6 +120,103 @@
 	END:
 .end_macro
 
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# BESOURO
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+.macro print_besouro() 			# printa o sprite do besouro
+	lw t0, pos_besouro 			# Importa a posicao
+	beqz t0, END
+	add t0, s3, t0 				# adiciona o endereco do buffer next
+
+	la t1, besouro 				# Importa endereco spritesheet
+	addi t1, t1, 8 				# Pula size
+
+	li t2, 16 					# look * width (12) ------> ajusta a posicao olhando
+	lb t3, besouro_look
+	mul t2, t2, t3
+	add t1,t1,t2 				# posicao na spritesheet
+	
+	li t4, 15 					# ctr: 16 linhas
+	VERT_DRAW:
+		lw t3, 0(t1) 			# Le spritesheet
+		sw t3, 0(t0)				# Printa na tela
+		lw t3, 4(t1)				# ...
+		sw t3, 4(t0)				# ...
+		lw t3, 8(t1)
+		sw t3, 8(t0)
+		lw t3, 12(t1)
+		sw t3, 12(t0)
+		
+		addi t1, t1, 64			# avanca linha spritesheet
+		addi t0, t0,320 			# avanca linha tela
+		addi t4,t4,-1			# diminui ctr
+		bgez t4, VERT_DRAW
+	END:
+.end_macro
+.macro del_besouro() 			# printa o sprite do besouro
+	lw t0, pos_prev_besouro 			# Importa a posicao
+	beqz t0, END
+	add t0, s4, t0 				# adiciona o endereco do buffer next
+	
+	li t3, 0x50505050
+	li t4, 15 					# ctr: 16 linhas
+	VERT_DRAW:
+
+		sw t3, 0(t0)				# Printa na tela
+		sw t3, 4(t0)				# ...
+		sw t3, 8(t0)
+		sw t3, 12(t0)
+		
+		addi t0, t0,320 			# avanca linha tela
+		addi t4,t4,-1			# diminui ctr
+		bgez t4, VERT_DRAW
+	END:
+.end_macro
+.macro print_pedra()				# deleta o sprite da pedra do besouro
+	lw t0, pos_pedra 			# Importa a posicao atual
+	beqz t0, END
+	add t0, s3, t0 				# adiciona o endereco do buffer next
+
+	la t1, pedra 				# Importa endereco spritesheet
+	addi t1, t1, 8 				# Pula size
+
+	li t2, 8 					# look * width (12) ------> ajusta a posicao olhando
+	lb t3, pedra_look
+	mul t2, t2, t3
+	add t1,t1,t2 				# posicao na spritesheet
+	
+	li t4, 7 					# ctr: 8 linhas
+	VERT_DRAW:
+		lw t3, 0(t1) 			# Le spritesheet
+		sw t3, 0(t0)				# Printa na tela
+		lw t3, 4(t1)				# ...
+		sw t3, 4(t0)				# ...
+
+		
+		addi t1, t1, 32			# avanca linha spritesheet
+		addi t0, t0,320 			# avanca linha tela
+		addi t4,t4,-1			# diminui ctr
+		bgez t4, VERT_DRAW
+	END:
+.end_macro
+.macro del_pedra() 				# deleta o sprite da pedra do besouro
+	lw t0, pos_prev_pedra 		# Importa a posicao previa
+	beqz t0, END
+	add t0, s4, t0 				# adiciona o endereco do buffer next
+
+	li t3, 0x50505050
+	li t4, 11 					# ctr: 12 linhas
+	VERT_DRAW:
+		sw t3, 0(t0)				# Printa na tela
+		sw t3, 4(t0)				# ...
+		sw t3, 8(t0)
+		
+		addi t0, t0,320 			# avanca linha tela
+		addi t4,t4,-1			# diminui ctr
+		bgez t4, VERT_DRAW
+	END:
+.end_macro
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # UI
@@ -166,23 +266,29 @@
 		
 .end_macro
 
-.macro ui_print_gas() 			# printa gasolina
-	lb t0, gas
-	li t1, 736 					# 92 * 8
-	mul t0, t0, t1 				# posicao na spritesheet
+.macro ui_print_gas() 			# printa gasolina / carencia
+	mv a0, s3
+	jal ra, ui_print_gas_func
+.end_macro
+
+.macro ui_print_cesta() 		# printa cesta de flores coletadas
+	lb t0, flor_win
+	lb t1, current_level
 	
-	la t2, carencia
-	addi t1,t2,8 				# skip size
-	add t1, t1, t0 				# posicao na spritesheet	
+	slli t1, t1, 1			# (64 * 8) * (nivel + (nivel - flor_win + 1)) = 512 * (2 nivel + 1 - flor_win)
+	addi t1, t1, 1
+	sub t0, t1, t0
 	
-	addi t0, s3,  340 			# posicao na tela
-	li t4, 720
-	add t0, t0, t4
-	li t4, 7 					# ctr: 7 linhas
+	li t1, 512 				
+	mul t0, t0, t1 			# posicao na spritesheet
+	la t1, cesta
+	addi t1,t1,8 			# skip size
+	add t1, t1, t0 			# posicao na spritesheet	
+	
+	li t0, 68752
+	add t0, t0, s3 			# posicao na tela 68480 (320*214) + 272
+	li t4, 7 				# ctr: 8 linhas
 	VERT_DRAW:
-	
-		####################################### UNROLL DO FOR LOOP HORIZONTAL: MAIS EFICIENTE
-		
         lw t3, 0(t1) # Le spritesheet
         sw t3, 0(t0) # Printa na tela
         lw t3, 4(t1) # Le spritesheet
@@ -199,46 +305,13 @@
         sw t3, 24(t0) # Printa na tela
         lw t3, 28(t1) # Le spritesheet
         sw t3, 28(t0) # Printa na tela
-        lw t3, 32(t1) # Le spritesheet
-        sw t3, 32(t0) # Printa na tela
-        lw t3, 36(t1) # Le spritesheet
-        sw t3, 36(t0) # Printa na tela
-        lw t3, 40(t1) # Le spritesheet
-        sw t3, 40(t0) # Printa na tela
-        lw t3, 44(t1) # Le spritesheet
-        sw t3, 44(t0) # Printa na tela
-        lw t3, 48(t1) # Le spritesheet
-        sw t3, 48(t0) # Printa na tela
-        lw t3, 52(t1) # Le spritesheet
-        sw t3, 52(t0) # Printa na tela
-        lw t3, 56(t1) # Le spritesheet
-        sw t3, 56(t0) # Printa na tela
-        lw t3, 60(t1) # Le spritesheet
-        sw t3, 60(t0) # Printa na tela
-        lw t3, 64(t1) # Le spritesheet
-        sw t3, 64(t0) # Printa na tela
-        lw t3, 68(t1) # Le spritesheet
-        sw t3, 68(t0) # Printa na tela
-        lw t3, 72(t1) # Le spritesheet
-        sw t3, 72(t0) # Printa na tela
-        lw t3, 76(t1) # Le spritesheet
-        sw t3, 76(t0) # Printa na tela
-        lw t3, 80(t1) # Le spritesheet
-        sw t3, 80(t0) # Printa na tela
-        lw t3, 84(t1) # Le spritesheet
-        sw t3, 84(t0) # Printa na tela
-        lw t3, 88(t1) # Le spritesheet
-        sw t3, 88(t0) # Printa na tela
-        	
-       ####################################### UNROLL DO FOR LOOP HORIZONTAL: MAIS EFICIENTE 	
-       
-		addi t1, t1, 92			# avanca linha spritesheet
+
+		addi t1, t1, 64			# avanca linha spritesheet
 		addi t0, t0,320 			# avanca linha tela
 		addi t4,t4,-1			# diminui ctr
 		bgez t4, VERT_DRAW
 	END:
-	
-	
+		
 .end_macro
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
