@@ -212,6 +212,32 @@ END:
 .end_macro
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# FLOR
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+.macro aaaaaaaa()
+		mv t1, 
+		mv t2, s1
+
+		li t3, 320			# diferenca hor
+		rem t4, t2, t3
+		rem t5, t1, t3		# extrair posicao hor	
+	
+		sub t5,t4,t5
+		abs(t5)
+		li t6, 10
+		bgt t5, t6, END_COL_PROX_PLAYER 		# | delta X |  > 10
+	
+	
+		div t4, t2, t3	# diferenca vert
+		div t5, t1, t3 	# extrair posicao vert
+		sub t5,t5,t4
+		abs(t5)
+		li t3, 10
+		bgt t5, t3, END_COL_PROX_PLAYER 		# | delta Y |  > 10
+	
+		j col_player
+.end_macro
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # ATAQUE
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
@@ -232,7 +258,7 @@ END:
 .macro spawn_bullet()
 	mv t0, s1			# Importa a posicao
 
-	lw t1, look			# direcao
+	lb t1, look			# direcao
 	la t4, bullet_dir
 	sb t1, 0(t4)
 

@@ -23,17 +23,20 @@ flor_win: .byte 1
 	li s7, 0x4b20  # ABELHA
 	li s8, 0xcd2c  # ABELHA     
 	li s9, 0x9c18  # ABELHA
+	li s10, 0
 .end_macro
 
-.macro update_level_0()
+.macro update_level()
 	level_update_input()			# ler input MMIO
 	
 	level_update_player_actions() 	# acoes do player: mover, atirar, avancar posicao do tiro, etc
 	
 	move_abelha(s7)					# Abelha s7
 	print_abelha(s7)
-	#move_abelha(s8)					# Abelha s8
-	#print_abelha(s8)
-	#move_abelha(s9)					# Abelha s9
-	#print_abelha(s9)
+	move_abelha(s8)					# Abelha s8
+	print_abelha(s8)
+	move_abelha(s9)					# Abelha s9
+	print_abelha(s9)
+	move_abelha(s10)					# Abelha s9
+	print_abelha(s10)
 .end_macro
