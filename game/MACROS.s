@@ -370,7 +370,7 @@ menu_state: .byte 0
 	ui_print_gas()				# print gasolina / carencia topo centro-esquerda
 	ui_print_vida()				# print vida canto inferior centro-direita
 	ui_print_cesta()			# print cesta de flores coletadas canto inferior direito
-	ui_print_score() 
+	ui_print_score(69564) 
 .end_macro
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -384,6 +384,7 @@ menu_state: .byte 0
 	beqz t1, NO_INPUT				# se nao tem input, pula a movimentacao
 	lw a0, MMIO_add					# Endereco Dados MMIO
 	#syscall(11)						# Ignorar: DEBUG
+	
 	
 	lb t0, menu_state
 	beqz t0, MENU

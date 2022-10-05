@@ -11,6 +11,7 @@
 .include "abelha.s"
 .include "flores.s"
 .include "besouro.s"
+.include "musicmanager.s"
 .text
 menu:
 	li t0, 4
@@ -554,7 +555,7 @@ ui_print_score_func:
 	la t1, numeros
 	addi t1,t1,8 			# skip size
 	
-	li t0, 69564
+	mv t0, a1
 	add t0, t0, s3 			# posicao na tela 68480 (320*214) + 84
 	
 	li t4, 10
@@ -684,4 +685,16 @@ setup_current_level_func:
 	lv4_menu:
 		setup_level_menu()
 	END:
+	jr ra
+
+
+
+
+sfx_ataque:
+	li a0,80		# define a nota
+	li a1,200		# define a duração da nota em ms
+	li a2,127		# define o instrumento
+	li a3,127		# define o volume
+	li a7,31		# define o syscall
+	ecall			# toca a nota
 	jr ra

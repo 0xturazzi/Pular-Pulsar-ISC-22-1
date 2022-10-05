@@ -102,13 +102,17 @@
 
 .macro setup_level_win()
 	print_win()
+	ui_print_score(59948)
 	NEXT_FRAME()
+	music_beethoven()
 	exit()
 .end_macro
 
 
 .macro setup_level_game_over()
 	print_game_over()
+	ui_print_score(59948)
 	NEXT_FRAME()
+	music_chopin()
 	exit()
 .end_macro

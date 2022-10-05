@@ -182,7 +182,6 @@ END:
 
 
 .macro player_die() 		# dano na vida (interface)
-	
 	li t3, 3				# o valor de vida vai crescendo conforme morre
 	lb t2, vida			# pois assim fica mais de carregar da spritesheet o valor correto para a interface
 	addi t2, t2, 1
@@ -234,6 +233,7 @@ END:
 	lw t0, bullet 
 	bnez t0, END 		# se tem municao
 	
+	sfx_ataque()
 	spawn_bullet()
 	END:
 .end_macro

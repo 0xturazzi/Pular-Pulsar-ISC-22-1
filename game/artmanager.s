@@ -283,8 +283,9 @@
 		
 .end_macro
 
-.macro ui_print_score() 		# printa cesta de flores coletadas
+.macro ui_print_score(%int) 		# printa cesta de flores coletadas
 	mv a0, s3
+	li, a1, %int
 	jal ra, ui_print_score_func
 		
 .end_macro
