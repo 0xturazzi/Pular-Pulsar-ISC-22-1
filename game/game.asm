@@ -365,7 +365,7 @@ besouro_move_func:				# move o besouro
 	
 		# colidiu com bullet
 		sw zero, pos_besouro, t1
-		del_pedra()
+		#del_pedra()
 		sw zero, pos_pedra, t1
 		player_gas()
 		player_score(50)
